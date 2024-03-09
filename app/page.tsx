@@ -1,5 +1,6 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import debounce from 'lodash/debounce';
 
 interface IMovie {
   id: string;
@@ -31,7 +32,7 @@ const generateRandomMovie = () => {
     'Zombie', 'Sarge', 'Capt', 'Captain', 'Punch', 'One', 'Two', 'Uno', 'Slice',
     'Slash', 'Melt', 'Melted', 'Melting', 'Fell', 'Wolf', 'Hound', 'Legacy', 'Sharp',
     'Dead', 'Mew', 'Chuckle', 'Bubba', 'Bubble', 'Sandwich', 'Smasher', 'Extreme', 'Multi',
-    'Universe', 'Ultimate', 'Death', 'Ready', 'Monkey','Elevator', 'Wrench', 'Grease',
+    'Universe', 'Ultimate', 'Death', 'Ready', 'Monkey', 'Elevator', 'Wrench', 'Grease',
     'Head', 'Theme', 'Grand', 'Cool', 'Kid', 'Boy', 'Girl', 'Vortex', 'Paradox'
   ];
 
@@ -56,8 +57,21 @@ const Movie = (props: IMovie) => {
 
 export default function Home() {
   const [isRandom, setIsRandom] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(generateRandomMovie());
+  const [inputValue, setInputValue] = useState(generateRandomMovie());
+  const [searchQuery, setSearchQuery] = useState(inputValue);
   const [movies, setMovies] = useState<Array<IMovie>>([]);
+
+  const triggerSearch = (search: string) => {
+    setIsRandom(false);
+    setSearchQuery(search);
+  };
+
+  const debouncedTriggerSearch = useCallback(
+    debounce((search) => {
+      triggerSearch(search);
+    }, 500),
+    []
+  );
 
   useEffect(() => {
     fetch(`https://search.imdbot.workers.dev?q=${searchQuery}`)
@@ -76,7 +90,7 @@ export default function Home() {
         return isRandom ? movies.slice(0, 10) : movies;
       })
       .then(data => setMovies(data));
-  }, []);
+  }, [searchQuery]);
 
   return (
     <div className="container mx-auto px-4">
@@ -84,9 +98,12 @@ export default function Home() {
         <input
           type="text"
           placeholder="Search for movies..."
-          className="w-full p-2 border border-gray-300 rounded"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded text-red-500"
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            debouncedTriggerSearch(e.target.value);
+          }}
         />
       </div>
       <div className="grid grid-cols-2 gap-4 mt-10">
