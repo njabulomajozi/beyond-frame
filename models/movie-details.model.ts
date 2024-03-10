@@ -1,4 +1,4 @@
-export interface IMovieDetails {
+export interface IIMovieDetailsServiceResponse {
     // id: string;
     // poster: string;
     // title: string;
@@ -10,7 +10,7 @@ export interface IMovieDetails {
     // keywords
 };
 
-export interface MovieDetails {
+export interface IMovieDetailsServiceResponse {
     short:     Short;
     imdbId:    string;
     top:       Top;

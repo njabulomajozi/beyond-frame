@@ -121,14 +121,12 @@ This web application, built using ReactJS and TypeScript, allows users to search
   - Browser Compatibility:
     - [ ] Ensure that the app runs smoothly on all major browsers (Chrome, Edge)
   - Business Logic Separation Development:
-    - [ ] Develop a network business logic SDK in TypeScript that encapsulates the logic for fetching movie data from the API.
-    - [ ] The SDK should be designed to be reusable in other React.js project and integrate seamlessly with a state manager solution.
-    - [ ] Include functions for fetching random movies, searching for movies, and retrieving movie details.
+    - [x] Develop a network business logic SDK in TypeScript that encapsulates the logic for fetching movie data from the API.
+    - [x] The SDK should be designed to be reusable in other React.js project and integrate seamlessly with a state manager solution.
+    - [x] Include functions for fetching random movies, searching for movies, and retrieving movie details.
   - State Manager Solution:
     - [ ] Integrate a state manager solution such as Redux or MobX to manage the application's state.
     - [ ] Use the state manager to manage global state, including movie data, search results, and selected movie details.
-- Improvements
-  - [ ] Cache results
 - 2nd Version
   - [ ] Implement pagination for search results.
   - [ ] Add filters to the search functionality to narrow down results by genre, release year, etc.

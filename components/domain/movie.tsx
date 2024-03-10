@@ -11,8 +11,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@app/components/generic/ui/alert-dialog";
-import { IMovieDetails, MovieDetails } from "@app/models/movie-details.model";
+import { IIMovieDetailsServiceResponse } from "@app/models/movie-details.model";
 import { IMovie } from "@app/models/movie-preview.model";
+import moviesService from "@app/services/movies.service";
 
 const Movie = memo((props: IMovie) => {
     const {
@@ -22,7 +23,7 @@ const Movie = memo((props: IMovie) => {
         year
     } = props;
 
-    const [details, setDetails] = useState<IMovieDetails>({
+    const [details, setDetails] = useState<IIMovieDetailsServiceResponse>({
         actors: []
     });
     const [loading, setLoading] = useState(false);
@@ -31,19 +32,19 @@ const Movie = memo((props: IMovie) => {
     const fetchDetails = useCallback(debounce((id) => {
         setLoading(true);
         setError(null);
-        fetch(`https://search.imdbot.workers.dev/?tt=${id}`)
-            .then(response => response.json())
-            .then((response: MovieDetails) => {
-                setDetails({
-                    description: response.short.description,
-                    actors: response.short.actor
-                });
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err);
-                setLoading(false);
+
+        moviesService.fetchMovieDetails({
+            id
+        }).then((movieDetails) => {
+            setDetails({
+                description: movieDetails.description,
+                actors: movieDetails.actors
             });
+            setLoading(false);
+        }).catch(err => {
+            setError(err);
+            setLoading(false);
+        });
     }, 500), [id]);
 
     useEffect(() => {
