@@ -10,13 +10,11 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isRandom, setIsRandom] = useState(true);
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [movies, setMovies] = useState<Array<IMovie>>([]);
 
   const triggerSearch = (search: string) => {
-    setIsRandom(false);
     setSearchQuery(search);
   };
 
@@ -28,16 +26,20 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
+    if (searchQuery === '' && !isInitialRender.current) {
       return;
     }
-  
+
     setLoading(true);
     setError(null);
 
-    const funcToRun = isRandom ? moviesService.fetchRandomMovies : moviesService.fetchMovies;
-    const input = isRandom ? { limit: 10 } : { searchQuery: inputValue };
+    let funcToRun = moviesService.fetchMovies;
+    let input: any = { searchQuery };
+
+    if (searchQuery.length < 1) {
+      funcToRun = moviesService.fetchRandomMovies;
+      input = { limit: 10 };
+    }
 
     funcToRun(input).then((movies) => {
       setMovies(movies);
@@ -46,7 +48,11 @@ export default function Home() {
       setError(err.message);
       setLoading(false);
     });
-  }, [searchQuery, inputValue]);
+
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+    }
+  }, [searchQuery]);
 
 
   return (
@@ -58,7 +64,6 @@ export default function Home() {
           className="w-full p-2 border border-gray-300 rounded text-red-500"
           value={inputValue}
           onChange={(e) => {
-            isRandom && setIsRandom(false);
             setInputValue(e.target.value);
             debouncedTriggerSearch(e.target.value);
           }}

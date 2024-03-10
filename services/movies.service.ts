@@ -45,8 +45,6 @@ class MoviesService {
 
         const searchQuery = generateRandomMovie();
 
-        console.log(searchQuery)
-
         try {
             const response = await fetch(`${this.baseUrl}?q=${searchQuery}`);
             if (!response.ok) {
