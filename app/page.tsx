@@ -1,13 +1,8 @@
 'use client'
 import { useCallback, useEffect, useState } from "react";
 import debounce from 'lodash/debounce';
-
-interface IMovie {
-  id: string;
-  poster: string;
-  title: string;
-  year: string
-}
+import { IMovie, MoviePreview } from "@app/models/movie-preview.model";
+import Movie from "@app/components/domain/movie";
 
 const generateRandomMovie = () => {
   const names = [
@@ -39,22 +34,6 @@ const generateRandomMovie = () => {
   return names[Math.floor(Math.random() * names.length)];
 }
 
-const Movie = (props: IMovie) => {
-  const {
-    poster,
-    title,
-    year
-  } = props;
-
-  return (
-    <div className="p-4 bg-white rounded shadow">
-      <img src={poster} alt={title} className="w-full h-64 object-cover rounded" />
-      <h2 className="text-xl font-bold mt-2">{title}</h2>
-      <p className="text-gray-600">{year}</p>
-    </div>
-  );
-};
-
 export default function Home() {
   const [isRandom, setIsRandom] = useState(true);
   const [inputValue, setInputValue] = useState(generateRandomMovie());
@@ -76,8 +55,8 @@ export default function Home() {
   useEffect(() => {
     fetch(`https://search.imdbot.workers.dev?q=${searchQuery}`)
       .then(response => response.json())
-      .then((response) => {
-        return response.description.map((movie: any) => {
+      .then((response: MoviePreview) => {
+        return response.description.map((movie) => {
           return {
             id: movie["#IMDB_ID"],
             poster: movie["#IMG_POSTER"],
