@@ -85,4 +85,6 @@ const Movie = memo((props: IMovie) => {
     );
 });
 
+Movie.displayName = 'Movie';
+
 export default Movie;
